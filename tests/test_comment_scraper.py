@@ -1,5 +1,5 @@
 from unittest import TestCase
-from adasfa import scraper_utils
+from CommentScraper.spiders import guardian_spider
 
 
 class TestScraperUtils(TestCase):
@@ -18,7 +18,7 @@ class TestScraperUtils(TestCase):
         """
         Succeed if beautifulsoup4 can fetch the default test url
         """
-        article_soup = scraper_utils.get_html(self.source)
+        article_soup = guardian_spider.get_html(self.source)
         if article_soup:
             pass
         else:
@@ -28,10 +28,10 @@ class TestScraperUtils(TestCase):
         """
         Succeed if the number of comments for the test url is above a last confirmed number of comment pages.
         """
-        article_soup = scraper_utils.get_html(self.source)
+        article_soup = guardian_spider.get_html(self.source)
         comment_url = article_soup.find(class_='discussion__heading').find('a')['href']
-        comment_soup = scraper_utils.get_html(comment_url)
-        total_pages = scraper_utils.num_pagination_buttons(comment_soup)
+        comment_soup = guardian_spider.get_html(comment_url)
+        total_pages = guardian_spider.num_pagination_buttons(comment_soup)
 
         if total_pages > 10:  # There were at least 18 last time we checked. There should at least be 10 or more.
             pass
@@ -39,7 +39,7 @@ class TestScraperUtils(TestCase):
             self.fail("We know that in this example there is more than one page of comments.")
 
     def test_scrape_comments(self):
-        output = scraper_utils.scrape_comments(self.source)
+        output = guardian_spider.scrape_comments(self.source)
         if output:
             pass
         else:
