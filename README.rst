@@ -5,6 +5,10 @@ Welcome to the Comment Scraper project. The aim of the project is to provide web
 
 To run the project please be sure to check the 'Requirements.txt' file for project dependencies.
 
+The full documentation for this project can be found at ReadTheDocs_.
+
+.. _ReadTheDocs: http://commentscraper.readthedocs.io/en/latest/index.html
+
 Output
 ================
 
