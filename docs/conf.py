@@ -22,6 +22,8 @@ import sys
 import mock
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
+sys.path.insert(1, os.path.abspath('..'))
+
 #check if run on ReadTheDocs
 if not on_rtd:
     sys.path.insert(1, os.path.abspath('../../CommentScraper'))
