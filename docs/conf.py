@@ -19,23 +19,16 @@
 #
 import os
 import sys
-import mock
+
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 sys.path.insert(1, os.path.abspath('..'))
 
-#check if run on ReadTheDocs
+# check if run on ReadTheDocs
 if not on_rtd:
-    sys.path.insert(1, os.path.abspath('../../CommentScraper'))
     import sphinx_rtd_theme
     html_theme = "sphinx_rtd_theme"
     html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-
-
-
-MOCK_MODULES = ['scrapy', 'urllib.request', 'extruct.w3cmicrodata', 'BeautifulSoup']
-for mod_name in MOCK_MODULES:
-    sys.modules[mod_name] = mock.Mock()
 
 # -- General configuration ------------------------------------------------
 
@@ -329,7 +322,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'Comment Scraper', 'Comment Scraper Documentation',
+    (master_doc, 'adasfa', 'adasfa Documentation',
      [author], 1)
 ]
 
@@ -344,8 +337,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Comment Scraper', 'Comment Scraper Documentation',
-     author, 'Comment Scraper', 'Scraping comments about news articles.',
+    (master_doc, 'adasfa', 'adasfa Documentation',
+     author, 'adasfa', 'One line description of project.',
      'Miscellaneous'),
 ]
 
