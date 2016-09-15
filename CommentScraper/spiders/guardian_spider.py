@@ -6,7 +6,12 @@ from bs4 import BeautifulSoup
 from extruct.w3cmicrodata import MicrodataExtractor
 from CommentScraper import items
 
+
 class GuardianSpider(scrapy.Spider):
+
+    """
+    GuardianSpider scrapes articles from theguardian.com.
+    """
 
     # define spider specific settings
     name = "guardian"
