@@ -280,7 +280,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'adasfa.tex', 'adasfa Documentation',
+    (master_doc, 'Comment Scraper.tex', 'Comment Scraper Documentation',
      'Michael Anslow', 'manual'),
 ]
 
@@ -322,7 +322,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'adasfa', 'adasfa Documentation',
+    (master_doc, 'Comment Scraper', 'Comment Scraper Documentation',
      [author], 1)
 ]
 
@@ -337,8 +337,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'adasfa', 'adasfa Documentation',
-     author, 'adasfa', 'One line description of project.',
+    (master_doc, 'Comment Scraper', 'Comment Scraper Documentation',
+     author, 'Comment Scraper', 'Scraping comments from news articles.',
      'Miscellaneous'),
 ]
 
