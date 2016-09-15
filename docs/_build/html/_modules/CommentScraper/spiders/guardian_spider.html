@@ -1,0 +1,378 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>CommentScraper.spiders.guardian_spider &mdash; Comment Scraper 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Comment Scraper 0.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Comment Scraper
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">CommentScraper</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">Comment Scraper</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>CommentScraper.spiders.guardian_spider</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for CommentScraper.spiders.guardian_spider</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">import</span> <span class="nn">urllib.robotparser</span>
+
+<span class="kn">import</span> <span class="nn">scrapy</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="k">import</span> <span class="n">BeautifulSoup</span>
+<span class="kn">from</span> <span class="nn">extruct.w3cmicrodata</span> <span class="k">import</span> <span class="n">MicrodataExtractor</span>
+<span class="kn">from</span> <span class="nn">CommentScraper</span> <span class="k">import</span> <span class="n">items</span>
+
+<div class="viewcode-block" id="GuardianSpider"><a class="viewcode-back" href="../../../CommentScraper.spiders.html#CommentScraper.spiders.guardian_spider.GuardianSpider">[docs]</a><span class="k">class</span> <span class="nc">GuardianSpider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+
+    <span class="c1"># define spider specific settings</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;guardian&quot;</span>
+    <span class="n">allowed_domains</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;theguardian.com&quot;</span><span class="p">]</span>
+    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;https://www.theguardian.com/environment/&#39;</span> <span class="o">+</span>\
+                  <span class="s1">&#39;climate-consensus-97-per-cent/2016/aug/22/&#39;</span> <span class="o">+</span>\
+                  <span class="s1">&#39;historical-documents-reveal-arctic-sea-ice-is-disappearing-at-record-speed&#39;</span>
+                  <span class="p">]</span>
+
+    <span class="n">custom_settings</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;USER_AGENT&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ITEM_PIPELINES&#39;</span><span class="p">:</span>  <span class="c1"># define the pipelines for handling items</span>
+            <span class="p">{</span><span class="s1">&#39;CommentScraper.pipelines.GuardianItemPipeline&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="GuardianSpider.parse"><a class="viewcode-back" href="../../../CommentScraper.spiders.html#CommentScraper.spiders.guardian_spider.GuardianSpider.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The lines below is a spider contract. For more info see:</span>
+<span class="sd">        http://doc.scrapy.org/en/latest/topics/contracts.html</span>
+<span class="sd">        @url http://www.dmoz.org/Computers/Programming/Languages/Python/Resources/</span>
+<span class="sd">        @scrapes name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">url</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_urls</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_article</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">get_comment_pages_urls</span><span class="p">(</span><span class="n">response</span><span class="p">):</span>
+            <span class="n">request</span> <span class="o">=</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parse_item</span><span class="p">)</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;parent_article_url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">url</span>
+            <span class="k">yield</span> <span class="n">request</span></div>
+
+<div class="viewcode-block" id="GuardianSpider.parse_article"><a class="viewcode-back" href="../../../CommentScraper.spiders.html#CommentScraper.spiders.guardian_spider.GuardianSpider.parse_article">[docs]</a>    <span class="k">def</span> <span class="nf">parse_article</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Fetching </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">))</span>
+
+        <span class="n">extractor</span> <span class="o">=</span> <span class="n">MicrodataExtractor</span><span class="p">()</span>
+        <span class="n">meta_items</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">body_as_unicode</span><span class="p">(),</span> <span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">)[</span><span class="s1">&#39;items&#39;</span><span class="p">]</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">GuardianSiteItem</span><span class="p">()</span>
+        <span class="n">meta_item</span> <span class="o">=</span> <span class="n">meta_items</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">properties</span> <span class="o">=</span> <span class="n">meta_item</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;author&#39;</span><span class="p">,</span> <span class="p">{}):</span>
+            <span class="n">name_properties</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="s1">&#39;author&#39;</span><span class="p">][</span><span class="s1">&#39;properties&#39;</span><span class="p">]</span>
+            <span class="n">item</span><span class="p">[</span><span class="s1">&#39;author_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name_properties</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+            <span class="n">item</span><span class="p">[</span><span class="s1">&#39;author_name_same_as&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name_properties</span><span class="p">[</span><span class="s1">&#39;sameAs&#39;</span><span class="p">]</span>
+            <span class="n">item</span><span class="p">[</span><span class="s1">&#39;schema_org_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="s1">&#39;author&#39;</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;publisher&#39;</span><span class="p">,</span> <span class="p">{}):</span>
+            <span class="n">publisher_properties</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="s1">&#39;publisher&#39;</span><span class="p">][</span><span class="s1">&#39;properties&#39;</span><span class="p">]</span>
+            <span class="n">item</span><span class="p">[</span><span class="s1">&#39;publisher_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">publisher_properties</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+            <span class="n">item</span><span class="p">[</span><span class="s1">&#39;publisher_name_same_as&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">publisher_properties</span><span class="p">[</span><span class="s1">&#39;sameAs&#39;</span><span class="p">]</span>
+            <span class="n">item</span><span class="p">[</span><span class="s1">&#39;publisher_schema_org_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="s1">&#39;publisher&#39;</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">url</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;headline&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="s1">&#39;headline&#39;</span><span class="p">]</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;date_published&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="s1">&#39;datePublished&#39;</span><span class="p">]</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;date_modified&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="s1">&#39;dateModified&#39;</span><span class="p">]</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;keywords&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="s1">&#39;keywords&#39;</span><span class="p">]</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="s1">&#39;articleBody&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">,</span> <span class="p">{}):</span>
+            <span class="n">image_descriptions</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">image_dict</span> <span class="ow">in</span> <span class="n">properties</span><span class="p">[</span><span class="s1">&#39;image&#39;</span><span class="p">]:</span>
+                <span class="n">image_descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image_dict</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">][</span><span class="s1">&#39;description&#39;</span><span class="p">])</span>
+
+            <span class="n">item</span><span class="p">[</span><span class="s1">&#39;image_descriptions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">image_descriptions</span>
+
+        <span class="k">return</span> <span class="n">item</span></div>
+
+<div class="viewcode-block" id="GuardianSpider.parse_item"><a class="viewcode-back" href="../../../CommentScraper.spiders.html#CommentScraper.spiders.guardian_spider.GuardianSpider.parse_item">[docs]</a>    <span class="k">def</span> <span class="nf">parse_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parses comments from the comment section.</span>
+<span class="sd">        :param article_url: the parent url where the article body is contained</span>
+<span class="sd">        :param response: The response object for the web page in question.</span>
+<span class="sd">        :return: Yields a comment item populated from response url.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Fetching </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">))</span>
+        <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="s2">&quot;html.parser&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">comment</span> <span class="ow">in</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;li.d-comment&#39;</span><span class="p">):</span>
+
+            <span class="n">comment_item</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">GuardianSiteCommentItem</span><span class="p">()</span>
+
+            <span class="n">comment_item</span><span class="p">[</span><span class="s1">&#39;parent_article_url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;parent_article_url&#39;</span><span class="p">]</span>
+            <span class="n">comment_item</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comment</span><span class="p">[</span><span class="s1">&#39;data-comment-id&#39;</span><span class="p">]</span>
+            <span class="n">comment_item</span><span class="p">[</span><span class="s1">&#39;time_stamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comment</span><span class="p">[</span><span class="s1">&#39;data-comment-timestamp&#39;</span><span class="p">]</span>
+            <span class="n">comment_item</span><span class="p">[</span><span class="s1">&#39;author&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comment</span><span class="p">[</span><span class="s1">&#39;data-comment-author&#39;</span><span class="p">]</span>
+            <span class="n">comment_item</span><span class="p">[</span><span class="s1">&#39;author_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comment</span><span class="p">[</span><span class="s1">&#39;data-comment-author-id&#39;</span><span class="p">]</span>
+
+            <span class="n">body</span> <span class="o">=</span> <span class="n">comment</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">class_</span><span class="o">=</span><span class="s1">&#39;d-comment__body&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">body</span><span class="o">.</span><span class="n">blockquote</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">body</span><span class="o">.</span><span class="n">blockquote</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="n">comment_item</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">getText</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+            <span class="n">reply_to</span> <span class="o">=</span> <span class="n">comment</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">class_</span><span class="o">=</span><span class="s1">&#39;d-comment__reply-to-author&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">reply_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">link</span> <span class="o">=</span> <span class="n">reply_to</span><span class="o">.</span><span class="n">parent</span><span class="p">[</span><span class="s1">&#39;href&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;#comment-&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                <span class="n">comment_item</span><span class="p">[</span><span class="s1">&#39;in_reply_to&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">link</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">comment_item</span><span class="p">[</span><span class="s1">&#39;in_reply_to&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                <span class="c1"># TODO Perhaps items allow default values?</span>
+
+            <span class="k">yield</span> <span class="n">comment_item</span></div></div>
+
+<div class="viewcode-block" id="get_comment_pages_urls"><a class="viewcode-back" href="../../../CommentScraper.spiders.html#CommentScraper.spiders.guardian_spider.get_comment_pages_urls">[docs]</a><span class="k">def</span> <span class="nf">get_comment_pages_urls</span><span class="p">(</span><span class="n">response</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a URL, this function finds the comments section and cycles through the pages using a helper</span>
+<span class="sd">    function to gather the comments from each page.</span>
+<span class="sd">    :param response:</span>
+<span class="sd">    :return: All comments</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get the web page</span>
+    <span class="n">article_soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="s2">&quot;html.parser&quot;</span><span class="p">)</span>
+
+    <span class="c1"># load the comment section from this web page</span>
+    <span class="n">comment_url</span> <span class="o">=</span> <span class="n">article_soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">class_</span><span class="o">=</span><span class="s1">&#39;discussion__heading&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)[</span><span class="s1">&#39;href&#39;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Finding comments for (</span><span class="si">{0}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">))</span>
+
+    <span class="n">comment_soup</span> <span class="o">=</span> <span class="n">get_html</span><span class="p">(</span><span class="n">comment_url</span><span class="p">)</span>
+
+    <span class="c1"># cycle through the pages in the comment section and aggregate comments</span>
+    <span class="n">total_pages</span> <span class="o">=</span> <span class="n">num_pagination_buttons</span><span class="p">(</span><span class="n">comment_soup</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total_pages</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urlencode</span><span class="p">({</span><span class="s1">&#39;page&#39;</span><span class="p">:</span> <span class="n">i</span><span class="p">})</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">?=</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">comment_url</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+        <span class="k">yield</span> <span class="n">url</span></div>
+
+
+<div class="viewcode-block" id="num_pagination_buttons"><a class="viewcode-back" href="../../../CommentScraper.spiders.html#CommentScraper.spiders.guardian_spider.num_pagination_buttons">[docs]</a><span class="k">def</span> <span class="nf">num_pagination_buttons</span><span class="p">(</span><span class="n">comment_soup</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :type comment_soup: beautifulsoup parse</span>
+<span class="sd">    :param comment_soup:</span>
+<span class="sd">    :return: number of pages of the comment section</span>
+
+<span class="sd">    :Example:</span>
+
+<span class="sd">    num_pagination_buttons(comment_soup) = 10</span>
+<span class="sd">    indicates there are 10 discussion pages for comment_soup</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Get the page number buttons.</span>
+    <span class="n">pagination_btns</span> <span class="o">=</span> <span class="n">comment_soup</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="s1">&#39;pagination__action&#39;</span><span class="p">)</span>
+    <span class="n">last_pagination_btn</span> <span class="o">=</span> <span class="n">comment_soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="s1">&#39;pagination__action--last&#39;</span><span class="p">)</span>
+
+    <span class="c1"># If there are page number buttons then get the</span>
+    <span class="k">if</span> <span class="n">last_pagination_btn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="c1"># there is more than 1 pagination button</span>
+        <span class="n">total_pages</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">last_pagination_btn</span><span class="p">[</span><span class="s1">&#39;data-page&#39;</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">pagination_btns</span><span class="p">:</span>
+
+        <span class="c1"># there is 1 pagination button</span>
+        <span class="n">total_pages</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">pagination_btns</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;data-page&#39;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="c1"># there are no pagination buttons</span>
+        <span class="n">total_pages</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">total_pages</span></div>
+
+
+<div class="viewcode-block" id="get_html"><a class="viewcode-back" href="../../../CommentScraper.spiders.html#CommentScraper.spiders.guardian_spider.get_html">[docs]</a><span class="k">def</span> <span class="nf">get_html</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :type url: string</span>
+<span class="sd">    :param url</span>
+<span class="sd">    :return: beautiful soup html for the url</span>
+<span class="sd">    :rtype: beautifulsoup html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">as</span> <span class="n">urlSession</span><span class="p">:</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="n">urlSession</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="s2">&quot;html.parser&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Michael Anslow.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
