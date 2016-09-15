@@ -13,7 +13,7 @@ Contents:
 	
    modules
 
-.. include:: introduction.rst
+.. include:: README.rst
 
 
 Indices and tables
