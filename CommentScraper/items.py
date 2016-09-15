@@ -28,7 +28,7 @@ class CommentItem(scrapy.Item):
 
 
 class GuardianSiteItem(SiteItem):
-    """GuardianSiteItem contains all the information for a scrapers url.
+    """GuardianSiteItem is a container specialisation for theguardian.com.
      """
 
     author_profile = scrapy.Field()
@@ -45,5 +45,5 @@ class GuardianSiteItem(SiteItem):
 
 
 class GuardianSiteCommentItem(CommentItem):
-    """GuardianSiteItem contains all the information for a scrapers url.
+    """GuardianSiteCommentItem is a container specialisation for theguardian.com
      """
