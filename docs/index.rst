@@ -6,14 +6,14 @@
 Welcome to CommentScraper's documentation!
 ==========================================
 
-.. include:: introduction.rst
-
 Contents:
 
 .. toctree::
    :maxdepth: 6
 	
    modules
+
+.. include:: introduction.rst
 
 
 Indices and tables
