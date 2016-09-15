@@ -20,12 +20,13 @@
 import os
 import sys
 
-sys.path.insert(1, os.path.abspath('../../CommentScraper'))
-
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+
+sys.path.insert(1, os.path.abspath('../CommentScraper'))
 
 #check if run on ReadTheDocs
 if not on_rtd:
+    sys.path.insert(1, os.path.abspath('../../CommentScraper'))
     import sphinx_rtd_theme
     html_theme = "sphinx_rtd_theme"
     html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
